@@ -1,0 +1,24 @@
+version: '3.8'
+
+services:
+  convert-api:
+    image: convert-api:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
+    networks:
+      - sua_rede
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.convert-api.rule=Host(`SEU_DOMINIO`)"
+      - "traefik.http.routers.convert-api.entrypoints=web,websecure"
+      - "traefik.http.routers.convert-api.tls=true"
+      - "traefik.http.routers.convert-api.tls.certresolver=leresolver" # Certificado Let's Encrypt
+      - "traefik.http.services.convert-api.loadbalancer.server.port=8000"
+    restart: unless-stopped
+    env_file:
+      - .env
+
+networks:
+  sua_rede:
+    external: true 
